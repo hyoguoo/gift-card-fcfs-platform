@@ -1,1 +1,3 @@
 rootProject.name = 'gifticon-fcfs-platform'
+
+include 'coupon-service'
