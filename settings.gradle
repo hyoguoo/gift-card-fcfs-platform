@@ -1,4 +1,5 @@
 rootProject.name = 'gifticon-fcfs-platform'
 
+include 'order-service'
 include 'coupon-service'
 include 'common'
