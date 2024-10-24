@@ -1,3 +1,11 @@
+kafka:
+  topics:
+    coupon-stock-decrease: coupon-decrease-topic
+    coupon-stock-rollback: coupon-rollback-topic
+  groups:
+    coupon-stock-decrease: coupon-decrease-group
+    coupon-stock-rollback: coupon-rollback-group
+
 spring:
   application:
     name: common
