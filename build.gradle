@@ -32,21 +32,5 @@ subprojects {
     }
 
     dependencies {
-        // Spring Boot
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-
-        // Validation
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-        // Lombok
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-
-        // Kafka
-        implementation 'org.springframework.kafka:spring-kafka'
-
-        // Test
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 }
