@@ -7,8 +7,6 @@ kafka:
     coupon-stock-rollback: coupon-rollback-group
 
 spring:
-  application:
-    name: common
   kafka:
     consumer:
       bootstrap-servers: localhost:9092
