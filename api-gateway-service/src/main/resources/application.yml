@@ -11,6 +11,11 @@ spring:
           uri: lb://COUPON-SERVICE
           predicates:
             - Path=/coupon/**
+          filters:
+            - name: AuthorizationFilter
+              args:
+                url-whitelist:
+                  - /coupon/hello
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
