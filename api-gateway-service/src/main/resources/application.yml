@@ -7,15 +7,15 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: coupon-service
-          uri: lb://COUPON-SERVICE
+        - id: gift-card-service
+          uri: lb://GIFT-CARD-SERVICE
           predicates:
-            - Path=/coupon/**
+            - Path=/gift-card/**
           filters:
             - name: AuthorizationFilter
               args:
                 url-whitelist:
-                  - /coupon/hello
+                  - /gift-card/hello
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:

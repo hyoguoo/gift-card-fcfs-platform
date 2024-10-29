@@ -36,5 +36,5 @@ eureka:
 
 kafka:
   topics:
-    coupon-stock-decrease: coupon-decrease-topic
-    coupon-stock-rollback: coupon-rollback-topic
+    gift-card-stock-decrease: gift-card-decrease-topic
+    gift-card-stock-rollback: gift-card-rollback-topic

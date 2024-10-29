@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: coupon-service
+    name: gift-card-service
 
   kafka:
     consumer:
@@ -36,8 +36,8 @@ eureka:
 
 kafka:
   topics:
-    coupon-stock-decrease: coupon-decrease-topic
-    coupon-stock-rollback: coupon-rollback-topic
+    gift-card-stock-decrease: gift-card-decrease-topic
+    gift-card-stock-rollback: gift-card-rollback-topic
   groups:
-    coupon-stock-decrease: coupon-decrease-group
-    coupon-stock-rollback: coupon-rollback-group
+    gift-card-stock-decrease: gift-card-decrease-group
+    gift-card-stock-rollback: gift-card-rollback-group

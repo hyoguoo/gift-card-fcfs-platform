@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CouponStockRollbackEventMessage {
+public class GiftCardStockDecreaseEventMessage {
 
-    private Long couponId;
+    private Long giftCardId;
     private Integer stockQuantity;
 }

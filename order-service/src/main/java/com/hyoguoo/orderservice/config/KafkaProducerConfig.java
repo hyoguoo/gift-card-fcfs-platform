@@ -1,7 +1,7 @@
 package com.hyoguoo.orderservice.config;
 
-import com.hyoguoo.kafka.message.CouponStockDecreaseEventMessage;
-import com.hyoguoo.kafka.message.CouponStockRollbackEventMessage;
+import com.hyoguoo.kafka.message.GiftCardStockDecreaseEventMessage;
+import com.hyoguoo.kafka.message.GiftCardStockRollbackEventMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,24 +11,24 @@ import org.springframework.kafka.core.ProducerFactory;
 @Configuration
 public class KafkaProducerConfig {
 
-    @Value("${kafka.topics.coupon-stock-decrease}")
+    @Value("${kafka.topics.gift-card-stock-decrease}")
     private String stockDecreaseTopic;
 
-    @Value("${kafka.topics.coupon-stock-rollback}")
+    @Value("${kafka.topics.gift-card-stock-rollback}")
     private String stockRollbackTopic;
 
     @Bean
-    public KafkaTemplate<String, CouponStockDecreaseEventMessage> stockDecreaseKafkaTemplate(
-            ProducerFactory<String, CouponStockDecreaseEventMessage> producerFactory) {
-        KafkaTemplate<String, CouponStockDecreaseEventMessage> kafkaTemplate = new KafkaTemplate<>(producerFactory);
+    public KafkaTemplate<String, GiftCardStockDecreaseEventMessage> stockDecreaseKafkaTemplate(
+            ProducerFactory<String, GiftCardStockDecreaseEventMessage> producerFactory) {
+        KafkaTemplate<String, GiftCardStockDecreaseEventMessage> kafkaTemplate = new KafkaTemplate<>(producerFactory);
         kafkaTemplate.setDefaultTopic(stockDecreaseTopic);
         return kafkaTemplate;
     }
 
     @Bean
-    public KafkaTemplate<String, CouponStockRollbackEventMessage> rollbackStockKafkaTemplate(
-            ProducerFactory<String, CouponStockRollbackEventMessage> producerFactory) {
-        KafkaTemplate<String, CouponStockRollbackEventMessage> kafkaTemplate = new KafkaTemplate<>(producerFactory);
+    public KafkaTemplate<String, GiftCardStockRollbackEventMessage> rollbackStockKafkaTemplate(
+            ProducerFactory<String, GiftCardStockRollbackEventMessage> producerFactory) {
+        KafkaTemplate<String, GiftCardStockRollbackEventMessage> kafkaTemplate = new KafkaTemplate<>(producerFactory);
         kafkaTemplate.setDefaultTopic(stockRollbackTopic);
         return kafkaTemplate;
     }
