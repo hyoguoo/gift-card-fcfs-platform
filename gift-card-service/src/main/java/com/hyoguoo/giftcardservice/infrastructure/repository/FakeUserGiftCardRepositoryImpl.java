@@ -1,6 +1,7 @@
 package com.hyoguoo.giftcardservice.infrastructure.repository;
 
 import com.hyoguoo.giftcardservice.domain.UserGiftCard;
+import com.hyoguoo.giftcardservice.domain.record.UserGiftCardRecord;
 import com.hyoguoo.util.ReflectionUtil;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,10 +34,19 @@ public class FakeUserGiftCardRepositoryImpl implements UserGiftCardRepository {
     }
 
     @Override
-    public Slice<UserGiftCard> findSliceByUserId(Long userId, Long cursor, Long size) {
+    public Slice<UserGiftCardRecord> findSliceByUserId(Long userId, Long cursor, Long size) {
         List<UserGiftCard> userGiftCards = userGiftCardMap.values().stream()
                 .filter(userGiftCard -> userGiftCard.getUserId().equals(userId))
-                .sorted(Comparator.comparing(UserGiftCard::getId)) // ID 순서대로 정렬
+                .sorted(Comparator.comparing(UserGiftCard::getId))
+                .toList();
+        List<UserGiftCardRecord> userGiftCardRecords = userGiftCards.stream()
+                .map(userGiftCard -> UserGiftCardRecord.builder()
+                        .userGiftCardId(userGiftCard.getId())
+                        .giftCardId(userGiftCard.getGiftCardId())
+                        .giftCardName("dummy")
+                        .userGiftCardStatus(userGiftCard.getUserGiftCardStatus())
+                        .purchaseDate(userGiftCard.getPurchaseDate())
+                        .build())
                 .collect(Collectors.toList());
 
         int startIndex = 0;
@@ -50,10 +60,10 @@ public class FakeUserGiftCardRepositoryImpl implements UserGiftCardRepository {
         }
 
         int endIndex = Math.min(startIndex + size.intValue(), userGiftCards.size());
-        List<UserGiftCard> userGiftCardSlice = userGiftCards.subList(startIndex, endIndex);
+        List<UserGiftCardRecord> userGiftCardRecordSlice = userGiftCardRecords.subList(startIndex, endIndex);
 
         boolean hasNext = endIndex < userGiftCards.size();
-        return new SliceImpl<>(userGiftCardSlice,
+        return new SliceImpl<>(userGiftCardRecordSlice,
                 PageRequest.of(0, size.intValue()),
                 hasNext);
     }
