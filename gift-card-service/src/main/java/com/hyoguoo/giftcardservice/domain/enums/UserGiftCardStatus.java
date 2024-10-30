@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum UserGiftCardStatus {
 
     ACTIVE("ACTIVE"),
+    USING("USING"),
     USED("USED"),
     EXPIRED("EXPIRED"),
     CANCELED("CANCELED");

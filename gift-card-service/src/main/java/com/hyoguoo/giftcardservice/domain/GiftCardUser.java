@@ -13,14 +13,18 @@ public class GiftCardUser {
     private Long giftCardId;
     private Long userId;
     private LocalDateTime purchaseDate;
+    private Long remainingBalance;
+    private Long totalBalance;
     private UserGiftCardStatus userGiftCardStatus;
 
     @Builder(builderMethodName = "requiredArgsBuilder", buildMethodName = "requiredArgsBuild")
-    public GiftCardUser(Long giftCardId, Long userId, LocalDateTime purchaseDate) {
+    public GiftCardUser(Long giftCardId, Long userId, LocalDateTime purchaseDate, Long totalBalance) {
         this.giftCardId = giftCardId;
         this.userId = userId;
         this.purchaseDate = purchaseDate;
         this.userGiftCardStatus = UserGiftCardStatus.ACTIVE;
+        this.remainingBalance = totalBalance;
+        this.totalBalance = totalBalance;
 
         validateNewUserGiftCard();
     }
@@ -36,6 +40,14 @@ public class GiftCardUser {
 
         if (this.purchaseDate == null) {
             throw new IllegalArgumentException("Purchase date is required");
+        }
+
+        if (this.remainingBalance == null || this.remainingBalance <= 0) {
+            throw new IllegalArgumentException("Remaining balance must be greater than 0");
+        }
+
+        if (this.totalBalance == null || this.totalBalance <= 0) {
+            throw new IllegalArgumentException("Total balance must be greater than 0");
         }
     }
 }
