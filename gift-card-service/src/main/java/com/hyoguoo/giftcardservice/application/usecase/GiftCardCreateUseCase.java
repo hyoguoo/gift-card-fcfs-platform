@@ -17,6 +17,8 @@ public class GiftCardCreateUseCase {
                 .giftCardName(command.getGiftCardName())
                 .quantity(command.getQuantity())
                 .price(command.getPrice())
+                .totalBalance(command.getTotalBalance())
+                .validityDays(command.getValidityDays())
                 .requiredArgsBuild();
 
         return giftCardRepository.saveOrUpdate(giftCard);

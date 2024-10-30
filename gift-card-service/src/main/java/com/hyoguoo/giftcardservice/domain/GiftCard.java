@@ -12,13 +12,15 @@ public class GiftCard {
     private Long quantity;
     private Long price;
     private Long totalBalance;
+    private Integer validityDays;
 
     @Builder(builderMethodName = "requiredArgsBuilder", buildMethodName = "requiredArgsBuild")
-    public GiftCard(String giftCardName, Long quantity, Long price, Long totalBalance) {
+    public GiftCard(String giftCardName, Long quantity, Long price, Long totalBalance, Integer validityDays) {
         this.giftCardName = giftCardName;
         this.quantity = quantity;
         this.price = price;
         this.totalBalance = totalBalance;
+        this.validityDays = validityDays;
 
         validateNewGiftCard();
     }
@@ -38,6 +40,10 @@ public class GiftCard {
 
         if (this.totalBalance == null || this.totalBalance <= 0) {
             throw new IllegalArgumentException("Total balance must be greater than 0");
+        }
+
+        if (this.validityDays == null || this.validityDays <= 0) {
+            throw new IllegalArgumentException("Validity days must be greater than 0");
         }
     }
 }
