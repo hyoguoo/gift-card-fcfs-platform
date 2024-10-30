@@ -1,4 +1,4 @@
-package com.hyoguoo.giftcardservice.infrastructure.repository;
+package com.hyoguoo.giftcardservice.application.port;
 
 import com.hyoguoo.giftcardservice.domain.GiftCardUser;
 import com.hyoguoo.giftcardservice.domain.record.GiftCardUserRecord;

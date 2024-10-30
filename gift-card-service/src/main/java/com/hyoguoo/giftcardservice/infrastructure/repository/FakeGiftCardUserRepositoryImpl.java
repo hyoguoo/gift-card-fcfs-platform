@@ -1,5 +1,6 @@
 package com.hyoguoo.giftcardservice.infrastructure.repository;
 
+import com.hyoguoo.giftcardservice.application.port.GiftCardUserRepository;
 import com.hyoguoo.giftcardservice.domain.GiftCardUser;
 import com.hyoguoo.giftcardservice.domain.record.GiftCardUserRecord;
 import com.hyoguoo.util.ReflectionUtil;

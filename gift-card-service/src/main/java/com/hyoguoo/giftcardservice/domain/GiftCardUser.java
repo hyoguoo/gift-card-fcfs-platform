@@ -2,11 +2,14 @@ package com.hyoguoo.giftcardservice.domain;
 
 import com.hyoguoo.giftcardservice.domain.enums.UserGiftCardStatus;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder(builderMethodName = "allArgsBuilder", buildMethodName = "allArgsBuild")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GiftCardUser {
 
     private Long id;
@@ -19,6 +22,7 @@ public class GiftCardUser {
     private Long totalBalance;
     private UserGiftCardStatus userGiftCardStatus;
 
+    @SuppressWarnings("unused")
     @Builder(builderMethodName = "requiredArgsBuilder", buildMethodName = "requiredArgsBuild")
     public GiftCardUser(Long giftCardId, Long userId, LocalDateTime purchaseDate, Long totalBalance,
             Integer validityDays) {

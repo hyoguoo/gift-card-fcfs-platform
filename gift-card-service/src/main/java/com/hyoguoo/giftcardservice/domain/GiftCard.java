@@ -1,10 +1,13 @@
 package com.hyoguoo.giftcardservice.domain;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder(builderMethodName = "allArgsBuilder", buildMethodName = "allArgsBuild")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GiftCard {
 
     private Long id;
@@ -14,6 +17,7 @@ public class GiftCard {
     private Long totalBalance;
     private Integer validityDays;
 
+    @SuppressWarnings("unused")
     @Builder(builderMethodName = "requiredArgsBuilder", buildMethodName = "requiredArgsBuild")
     public GiftCard(String giftCardName, Long quantity, Long price, Long totalBalance, Integer validityDays) {
         this.giftCardName = giftCardName;
