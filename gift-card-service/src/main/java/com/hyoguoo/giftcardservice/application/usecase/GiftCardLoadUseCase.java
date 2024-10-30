@@ -1,6 +1,7 @@
 package com.hyoguoo.giftcardservice.application.usecase;
 
 import com.hyoguoo.giftcardservice.application.dto.command.FindMyGiftCardCursorCommand;
+import com.hyoguoo.giftcardservice.domain.GiftCardUser;
 import com.hyoguoo.giftcardservice.domain.record.GiftCardUserRecord;
 import com.hyoguoo.giftcardservice.infrastructure.repository.GiftCardUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,5 +18,10 @@ public class GiftCardLoadUseCase {
         return giftCardUserRepository.findSliceByUserId(command.getUserId(),
                 command.getCursor(),
                 command.getSize());
+    }
+
+    public GiftCardUser loadGiftCard(Long userGiftCardId) {
+        return giftCardUserRepository.findById(userGiftCardId)
+                .orElseThrow(() -> new IllegalArgumentException("GiftCardUser not found"));
     }
 }
