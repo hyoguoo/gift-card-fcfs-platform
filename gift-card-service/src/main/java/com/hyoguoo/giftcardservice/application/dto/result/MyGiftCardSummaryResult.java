@@ -1,7 +1,7 @@
 package com.hyoguoo.giftcardservice.application.dto.result;
 
 import com.hyoguoo.giftcardservice.domain.enums.UserGiftCardStatus;
-import com.hyoguoo.giftcardservice.domain.record.UserGiftCardRecord;
+import com.hyoguoo.giftcardservice.domain.record.GiftCardUserRecord;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,13 +16,13 @@ public class MyGiftCardSummaryResult {
     private final UserGiftCardStatus userGiftCardStatus;
     private final LocalDateTime purchaseDate;
 
-    public static MyGiftCardSummaryResult from(UserGiftCardRecord userGiftCardRecord) {
+    public static MyGiftCardSummaryResult from(GiftCardUserRecord giftCardUserRecord) {
         return MyGiftCardSummaryResult.builder()
-                .userGiftCardId(userGiftCardRecord.getUserGiftCardId())
-                .giftCardId(userGiftCardRecord.getGiftCardId())
-                .giftCardName(userGiftCardRecord.getGiftCardName())
-                .userGiftCardStatus(userGiftCardRecord.getUserGiftCardStatus())
-                .purchaseDate(userGiftCardRecord.getPurchaseDate())
+                .userGiftCardId(giftCardUserRecord.getUserGiftCardId())
+                .giftCardId(giftCardUserRecord.getGiftCardId())
+                .giftCardName(giftCardUserRecord.getGiftCardName())
+                .userGiftCardStatus(giftCardUserRecord.getUserGiftCardStatus())
+                .purchaseDate(giftCardUserRecord.getPurchaseDate())
                 .build();
     }
 }

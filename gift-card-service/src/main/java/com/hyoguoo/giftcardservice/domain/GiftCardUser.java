@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder(builderMethodName = "allArgsBuilder", buildMethodName = "allArgsBuild")
-public class UserGiftCard {
+public class GiftCardUser {
 
     private Long id;
     private Long giftCardId;
@@ -16,7 +16,7 @@ public class UserGiftCard {
     private UserGiftCardStatus userGiftCardStatus;
 
     @Builder(builderMethodName = "requiredArgsBuilder", buildMethodName = "requiredArgsBuild")
-    public UserGiftCard(Long giftCardId, Long userId, LocalDateTime purchaseDate) {
+    public GiftCardUser(Long giftCardId, Long userId, LocalDateTime purchaseDate) {
         this.giftCardId = giftCardId;
         this.userId = userId;
         this.purchaseDate = purchaseDate;
