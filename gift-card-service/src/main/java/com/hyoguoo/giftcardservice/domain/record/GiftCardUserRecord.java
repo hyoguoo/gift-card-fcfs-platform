@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UserGiftCardRecord {
+public class GiftCardUserRecord {
 
     private final Long userGiftCardId;
     private final Long giftCardId;

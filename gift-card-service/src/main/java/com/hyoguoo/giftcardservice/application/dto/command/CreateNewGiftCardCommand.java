@@ -10,4 +10,6 @@ public class CreateNewGiftCardCommand {
     private final String giftCardName;
     private final Long quantity;
     private final Long price;
+    private final Long totalBalance;
+    private final Integer validityDays;
 }
