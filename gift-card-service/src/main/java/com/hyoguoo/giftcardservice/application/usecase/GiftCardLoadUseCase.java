@@ -3,7 +3,7 @@ package com.hyoguoo.giftcardservice.application.usecase;
 import com.hyoguoo.giftcardservice.application.dto.command.FindMyGiftCardCursorCommand;
 import com.hyoguoo.giftcardservice.domain.GiftCardUser;
 import com.hyoguoo.giftcardservice.domain.record.GiftCardUserRecord;
-import com.hyoguoo.giftcardservice.infrastructure.repository.GiftCardUserRepository;
+import com.hyoguoo.giftcardservice.application.port.GiftCardUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
