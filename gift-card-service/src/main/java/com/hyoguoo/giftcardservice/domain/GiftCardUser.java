@@ -58,4 +58,42 @@ public class GiftCardUser {
             throw new IllegalArgumentException("Validity days must be greater than 0");
         }
     }
+
+    // 낙관적 락 사용
+    public void useBalance(Long amount, LocalDateTime now, Long usedUserId) {
+        if (userGiftCardStatus == UserGiftCardStatus.USED ||
+                userGiftCardStatus == UserGiftCardStatus.EXPIRED ||
+                userGiftCardStatus == UserGiftCardStatus.CANCELED) {
+            throw new IllegalStateException("Cannot use balance in current status: " + userGiftCardStatus);
+        }
+
+        if (now.isAfter(this.expirationDate)) {
+            throw new IllegalStateException("Gift card has expired and cannot be used");
+        }
+
+        if (this.purchaseDate.isAfter(now)) {
+            throw new IllegalStateException("Gift card has not been purchased yet");
+        }
+
+        if (!this.userId.equals(usedUserId)) {
+            throw new IllegalArgumentException("User ID does not match");
+        }
+
+        if (amount == null || amount <= 0) {
+            throw new IllegalArgumentException("Usage amount must be greater than 0");
+        }
+
+        if (remainingBalance < amount) {
+            throw new IllegalArgumentException("Insufficient balance");
+        }
+
+        this.remainingBalance -= amount;
+
+        if (this.remainingBalance == 0) {
+            this.userGiftCardStatus = UserGiftCardStatus.USED;
+            this.usedDate = now;
+        } else if (this.remainingBalance < totalBalance) {
+            this.userGiftCardStatus = UserGiftCardStatus.USING;
+        }
+    }
 }
