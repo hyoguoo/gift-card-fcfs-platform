@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "gift-card-service")
 public interface GiftCardFeignClient {
 
-    @GetMapping("/gift-card/internal/{giftCardId}")
+    @GetMapping("/internal/gift-card/{giftCardId}")
     GiftCardInfo getGiftCardInfo(@PathVariable Long giftCardId);
 }

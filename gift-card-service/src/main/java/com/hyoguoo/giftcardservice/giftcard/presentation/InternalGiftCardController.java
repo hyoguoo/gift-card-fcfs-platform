@@ -14,7 +14,7 @@ public class InternalGiftCardController {
 
     private final GiftCardFindService giftCardFindService;
 
-    @GetMapping("/gift-card/internal/{id}")
+    @GetMapping("/internal/gift-card/{id}")
     public GiftCardInfoResponse getGiftCardInfo(@PathVariable Long id) {
         GiftCardInfoResult giftCardInfo = giftCardFindService.getGiftCardInfo(id);
 
