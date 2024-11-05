@@ -1,5 +1,7 @@
 package com.hyoguoo.orderservice.domain;
 
+import com.hyoguoo.orderservice.application.dto.command.CheckoutCommand;
+import com.hyoguoo.orderservice.domain.dto.GiftCardInfo;
 import com.hyoguoo.orderservice.domain.enums.OrderStatus;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -24,10 +26,10 @@ public class OrderInfo {
 
     @SuppressWarnings("unused")
     @Builder(builderMethodName = "requiredArgsBuilder", buildMethodName = "requiredArgsBuild")
-    protected OrderInfo(Long buyerId, Long giftCardId, Long paymentAmount, String orderId, LocalDateTime orderedAt) {
-        this.buyerId = buyerId;
-        this.giftCardId = giftCardId;
-        this.paymentAmount = paymentAmount;
+    protected OrderInfo(CheckoutCommand command, GiftCardInfo giftCardInfo, String orderId, LocalDateTime orderedAt) {
+        this.buyerId = command.getBuyerId();
+        this.giftCardId = giftCardInfo.getGiftCardId();
+        this.paymentAmount = giftCardInfo.getPrice();
         this.orderId = orderId;
         this.orderedAt = orderedAt;
         this.orderName = "Order for gift card " + giftCardId;

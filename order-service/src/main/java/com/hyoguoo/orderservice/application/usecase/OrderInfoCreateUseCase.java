@@ -19,9 +19,8 @@ public class OrderInfoCreateUseCase {
 
     public OrderInfo createOrderInfo(CheckoutCommand command, GiftCardInfo giftCardInfo) {
         OrderInfo orderInfo = OrderInfo.requiredArgsBuilder()
-                .buyerId(command.getBuyerId())
-                .giftCardId(command.getGiftCardId())
-                .paymentAmount(giftCardInfo.getPrice())
+                .command(command)
+                .giftCardInfo(giftCardInfo)
                 .orderId(uuidProvider.generateUUID())
                 .orderedAt(localDateTimeProvider.now())
                 .requiredArgsBuild();
