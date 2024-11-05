@@ -1,5 +1,6 @@
 package com.hyoguoo.orderservice.domain.dto;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,4 +11,5 @@ public class GiftCardInfo {
     private final Long giftCardId;
     private final String giftCardName;
     private final Long price;
+    private final LocalDateTime saleStartAt;
 }

@@ -2,6 +2,7 @@ package com.hyoguoo.orderservice.infrastructure.client;
 
 import com.hyoguoo.orderservice.application.port.GiftCardPort;
 import com.hyoguoo.orderservice.domain.dto.GiftCardInfo;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ public class FakeGiftCardClientAdapter implements GiftCardPort {
                 .giftCardId(giftCardId)
                 .giftCardName("Fake Gift Card")
                 .price(10000L)
+                .saleStartAt(LocalDateTime.now().minusHours(1))
                 .build();
     }
 }
