@@ -10,10 +10,13 @@ import com.hyoguoo.paymentservice.payment.domain.dto.TossPaymentInfo;
 import com.hyoguoo.paymentservice.payment.exception.PaymentOrderedStockException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentTossNonRetryableException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentTossRetryableException;
+import com.hyoguoo.paymentservice.payment.exception.PaymentValidateException;
 import com.hyoguoo.paymentservice.payment.presentation.port.PaymentConfirmService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentConfirmServiceImpl implements PaymentConfirmService {
@@ -47,9 +50,12 @@ public class PaymentConfirmServiceImpl implements PaymentConfirmService {
         } catch (PaymentTossNonRetryableException e) {
             handleNonRetryableFailure(paymentEvent);
             throw new IllegalArgumentException("Toss non-retryable error");
+        } catch (PaymentValidateException e) {
+            handleValidationFailure(paymentEvent);
+            throw new IllegalArgumentException("Validation error");
         } catch (Exception e) {
             handleUnknownException(paymentEvent);
-            throw new IllegalArgumentException("Unknown error");
+            throw e;
         }
     }
 
@@ -70,15 +76,24 @@ public class PaymentConfirmServiceImpl implements PaymentConfirmService {
     }
 
     private void handleNonRetryableFailure(PaymentEvent paymentEvent) {
+        log.info("Non-retryable failure");
         orderedGiftCardStockUseCase.increaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
         paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
     }
 
     private void handleRetryableFailure(PaymentEvent paymentEvent) {
+        log.info("Retryable failure");
         paymentProcessorUseCase.markPaymentAsUnknown(paymentEvent);
     }
 
+    private void handleValidationFailure(PaymentEvent paymentEvent) {
+        log.info("Validation failed");
+        orderedGiftCardStockUseCase.increaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
+        paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
+    }
+
     private void handleUnknownException(PaymentEvent paymentEvent) {
+        log.error("Unknown exception occurred");
         orderedGiftCardStockUseCase.increaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
         paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
     }
