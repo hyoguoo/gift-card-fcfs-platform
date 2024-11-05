@@ -49,3 +49,8 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+kafka:
+  topics:
+    gift-card-stock-decrease: gift-card-decrease-topic
+    gift-card-stock-rollback: gift-card-rollback-topic

@@ -1,4 +1,4 @@
-package com.hyoguoo.orderservice.core.config;
+package com.hyoguoo.paymentservice.core.config;
 
 import com.hyoguoo.kafka.message.GiftCardStockDecreaseEventMessage;
 import com.hyoguoo.kafka.message.GiftCardStockRollbackEventMessage;
