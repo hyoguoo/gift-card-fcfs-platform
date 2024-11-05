@@ -19,6 +19,7 @@ public class GiftCardCreateUseCase {
                 .price(command.getPrice())
                 .totalBalance(command.getTotalBalance())
                 .validityDays(command.getValidityDays())
+                .saleStartAt(command.getSaleStartAt())
                 .requiredArgsBuild();
 
         return giftCardRepository.saveOrUpdate(giftCard);

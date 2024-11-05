@@ -1,5 +1,6 @@
 package com.hyoguoo.giftcardservice.application.dto.command;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,4 +13,5 @@ public class CreateNewGiftCardCommand {
     private final Long price;
     private final Long totalBalance;
     private final Integer validityDays;
+    private final LocalDateTime saleStartAt;
 }

@@ -1,5 +1,6 @@
 package com.hyoguoo.giftcardservice.domain;
 
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,15 +17,17 @@ public class GiftCard {
     private Long price;
     private Long totalBalance;
     private Integer validityDays;
+    private LocalDateTime saleStartAt;
 
     @SuppressWarnings("unused")
     @Builder(builderMethodName = "requiredArgsBuilder", buildMethodName = "requiredArgsBuild")
-    public GiftCard(String giftCardName, Long quantity, Long price, Long totalBalance, Integer validityDays) {
+    public GiftCard(String giftCardName, Long quantity, Long price, Long totalBalance, Integer validityDays, LocalDateTime saleStartAt) {
         this.giftCardName = giftCardName;
         this.quantity = quantity;
         this.price = price;
         this.totalBalance = totalBalance;
         this.validityDays = validityDays;
+        this.saleStartAt = saleStartAt;
 
         validateNewGiftCard();
     }
@@ -48,6 +51,10 @@ public class GiftCard {
 
         if (this.validityDays == null || this.validityDays <= 0) {
             throw new IllegalArgumentException("Validity days must be greater than 0");
+        }
+
+        if (this.saleStartAt == null) {
+            throw new IllegalArgumentException("Sale start at is required");
         }
     }
 }
