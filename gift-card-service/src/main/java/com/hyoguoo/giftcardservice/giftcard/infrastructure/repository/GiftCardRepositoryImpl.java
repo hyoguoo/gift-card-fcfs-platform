@@ -22,4 +22,14 @@ public class GiftCardRepositoryImpl implements GiftCardRepository {
     public GiftCard saveOrUpdate(GiftCard giftCard) {
         return jpaGiftCardRepository.save(GiftCardEntity.from(giftCard)).toDomain();
     }
+
+    @Override
+    public void decreaseQuantity(Long id, Integer quantity) {
+        jpaGiftCardRepository.decreaseQuantity(id, quantity);
+    }
+
+    @Override
+    public void increaseQuantity(Long id, Integer quantity) {
+        jpaGiftCardRepository.increaseQuantity(id, quantity);
+    }
 }

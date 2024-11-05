@@ -8,4 +8,8 @@ public interface GiftCardRepository {
     Optional<GiftCard> findById(Long id);
 
     GiftCard saveOrUpdate(GiftCard giftCard);
+
+    void decreaseQuantity(Long id, Integer quantity);
+
+    void increaseQuantity(Long id, Integer quantity);
 }
