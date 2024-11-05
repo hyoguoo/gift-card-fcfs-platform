@@ -1,6 +1,7 @@
 package com.hyoguoo.giftcardservice.giftcard.application;
 
 import com.hyoguoo.giftcardservice.giftcard.application.dto.command.FindMyGiftCardCursorCommand;
+import com.hyoguoo.giftcardservice.giftcard.application.dto.result.GiftCardInfoResult;
 import com.hyoguoo.giftcardservice.giftcard.application.dto.result.MyGiftCardListResult;
 import com.hyoguoo.giftcardservice.giftcard.application.dto.result.MyGiftCardSummaryResult;
 import com.hyoguoo.giftcardservice.giftcard.application.usecase.GiftCardLoadUseCase;
@@ -17,6 +18,11 @@ import org.springframework.stereotype.Service;
 public class GiftCardFindServiceImpl implements GiftCardFindService {
 
     private final GiftCardLoadUseCase giftCardLoadUseCase;
+
+    @Override
+    public GiftCardInfoResult getGiftCardInfo(Long giftCardId) {
+        return giftCardLoadUseCase.getGiftCardInfo(giftCardId);
+    }
 
     @Override
     public MyGiftCardListResult findMyGiftCardList(FindMyGiftCardCursorCommand command) {
