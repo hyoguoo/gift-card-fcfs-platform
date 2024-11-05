@@ -18,9 +18,13 @@ public class GiftCardLoadUseCase {
     private final GiftCardRepository giftCardRepository;
     private final GiftCardUserRepository giftCardUserRepository;
 
-    public GiftCardInfoResult getGiftCardInfo(Long giftCardId) {
-        GiftCard giftCard = giftCardRepository.findById(giftCardId)
+    public GiftCard getGiftCardById(Long giftCardId) {
+        return giftCardRepository.findById(giftCardId)
                 .orElseThrow(() -> new IllegalArgumentException("GiftCard not found"));
+    }
+
+    public GiftCardInfoResult getGiftCardInfo(Long giftCardId) {
+        GiftCard giftCard = getGiftCardById(giftCardId);
 
         return GiftCardInfoResult.builder()
                 .giftCardId(giftCard.getId())
