@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class FakePaymentClientAdapter implements PaymentPort {
+public class PaymentClientAdapter implements PaymentPort {
+
+    private final PaymentFeignClient paymentFeignClient;
 
     @Override
     public void checkoutPayment(PaymentCheckoutCommand command) {
-        // Do nothing
+        paymentFeignClient.checkoutPayment(command);
     }
 }

@@ -24,18 +24,23 @@ public class OrderCheckoutServiceImpl implements OrderCheckoutService {
     public CheckoutResult checkoutOrder(CheckoutCommand command) {
         GiftCardInfo giftCardInfo = orderedGiftCardLoadUseCase.loadOrderedGiftCard(command.getGiftCardId());
         OrderInfo savedOrderInfo = orderInfoCreateUseCase.createOrderInfo(command, giftCardInfo);
-
-        PaymentCheckoutCommand paymentCheckoutCommand = PaymentCheckoutCommand.builder()
-                .buyerId(command.getBuyerId())
-                .orderInfoId(savedOrderInfo.getId())
-                .orderId(savedOrderInfo.getOrderId())
-                .build();
-
-        paymentCheckoutUseCase.checkoutPayment(paymentCheckoutCommand);
+        checkoutPayment(command, savedOrderInfo, giftCardInfo);
 
         return CheckoutResult.builder()
                 .orderId(savedOrderInfo.getOrderId())
                 .totalAmount(savedOrderInfo.getPaymentAmount())
                 .build();
+    }
+
+    private void checkoutPayment(CheckoutCommand command, OrderInfo savedOrderInfo, GiftCardInfo giftCardInfo) {
+        PaymentCheckoutCommand paymentCheckoutCommand = PaymentCheckoutCommand.builder()
+                .buyerId(command.getBuyerId())
+                .orderInfoId(savedOrderInfo.getId())
+                .orderId(savedOrderInfo.getOrderId())
+                .giftCardId(command.getGiftCardId())
+                .giftCardPrice(giftCardInfo.getPrice())
+                .build();
+
+        paymentCheckoutUseCase.checkoutPayment(paymentCheckoutCommand);
     }
 }

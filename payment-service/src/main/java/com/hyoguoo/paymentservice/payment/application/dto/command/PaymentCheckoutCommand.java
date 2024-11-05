@@ -1,4 +1,4 @@
-package com.hyoguoo.orderservice.order.application.dto.command;
+package com.hyoguoo.paymentservice.payment.application.dto.command;
 
 import lombok.Builder;
 import lombok.Getter;

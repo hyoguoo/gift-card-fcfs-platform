@@ -43,10 +43,10 @@ public class PaymentEventEntity extends BaseEntity {
     @Column(name = "order_id", nullable = false)
     private String orderId;
 
-    @Column(name = "payment_key", nullable = false)
+    @Column(name = "payment_key")
     private String paymentKey;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_amount")
     private Long totalAmount;
 
     @Enumerated(EnumType.STRING)
