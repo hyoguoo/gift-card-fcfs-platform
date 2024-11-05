@@ -11,5 +11,5 @@ public interface GiftCardUserRepository {
 
     GiftCardUser saveOrUpdate(GiftCardUser giftCardUser);
 
-    Slice<GiftCardUserRecord> findSliceByUserId(Long userId, Long cursor, Long size);
+    Slice<GiftCardUserRecord> findSliceByUserId(Long userId, Long cursor, Integer size);
 }
