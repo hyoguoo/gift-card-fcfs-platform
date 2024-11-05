@@ -64,4 +64,20 @@ public class OrderInfo {
             throw new IllegalArgumentException("Order cannot be placed before sale start at");
         }
     }
+
+    public void completeOrder() {
+        if (this.orderStatus != OrderStatus.PENDING &&
+                this.orderStatus != OrderStatus.COMPLETED) {
+            throw new IllegalStateException("Order status must be PENDING to complete");
+        }
+        this.orderStatus = OrderStatus.COMPLETED;
+    }
+
+    public void failOrder() {
+        if (this.orderStatus != OrderStatus.PENDING &&
+                this.orderStatus != OrderStatus.FAILED) {
+            throw new IllegalStateException("Order status must be PENDING to fail");
+        }
+        this.orderStatus = OrderStatus.FAILED;
+    }
 }
