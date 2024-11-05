@@ -1,10 +1,11 @@
 package com.hyoguoo.paymentservice.payment.application.usecase;
 
+import com.hyoguoo.paymentservice.core.common.application.port.LocalDateTimeProvider;
 import com.hyoguoo.paymentservice.payment.application.dto.command.PaymentConfirmCommand;
 import com.hyoguoo.paymentservice.payment.application.dto.command.TossPaymentConfirmCommand;
+import com.hyoguoo.paymentservice.payment.application.port.OrderInfoMessageProducer;
 import com.hyoguoo.paymentservice.payment.application.port.PaymentEventRepository;
 import com.hyoguoo.paymentservice.payment.application.port.TossPaymentGateway;
-import com.hyoguoo.paymentservice.core.common.application.port.LocalDateTimeProvider;
 import com.hyoguoo.paymentservice.payment.domain.PaymentEvent;
 import com.hyoguoo.paymentservice.payment.domain.dto.TossPaymentInfo;
 import com.hyoguoo.paymentservice.payment.domain.dto.enums.PaymentConfirmResultStatus;
@@ -21,6 +22,7 @@ public class PaymentProcessorUseCase {
     private final PaymentEventRepository paymentEventRepository;
     private final LocalDateTimeProvider localDateTimeProvider;
     private final TossPaymentGateway tossPaymentGateway;
+    private final OrderInfoMessageProducer orderInfoMessageProducer;
 
     public PaymentEvent executePayment(PaymentEvent paymentEvent, String paymentKey) {
         paymentEvent.execute(paymentKey, localDateTimeProvider.now());
@@ -61,12 +63,18 @@ public class PaymentProcessorUseCase {
 
     public PaymentEvent markPaymentAsDone(PaymentEvent paymentEvent, LocalDateTime approvedAt) {
         paymentEvent.done(approvedAt);
-        return paymentEventRepository.saveOrUpdate(paymentEvent);
+        PaymentEvent savedPaymentEvent = paymentEventRepository.saveOrUpdate(paymentEvent);
+        orderInfoMessageProducer.sendOrderCompleted(savedPaymentEvent.getOrderInfoId());
+
+        return savedPaymentEvent;
     }
 
     public PaymentEvent markPaymentAsFail(PaymentEvent paymentEvent) {
         paymentEvent.fail();
-        return paymentEventRepository.saveOrUpdate(paymentEvent);
+        PaymentEvent savedPaymentEvent = paymentEventRepository.saveOrUpdate(paymentEvent);
+        orderInfoMessageProducer.sendOrderFailed(savedPaymentEvent.getOrderInfoId());
+
+        return savedPaymentEvent;
     }
 
     public PaymentEvent markPaymentAsUnknown(PaymentEvent paymentEvent) {

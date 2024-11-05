@@ -2,7 +2,6 @@ package com.hyoguoo.paymentservice.payment.application;
 
 import com.hyoguoo.paymentservice.payment.application.dto.command.PaymentConfirmCommand;
 import com.hyoguoo.paymentservice.payment.application.dto.result.PaymentConfirmResult;
-import com.hyoguoo.paymentservice.payment.application.port.OrderInfoMessageProducer;
 import com.hyoguoo.paymentservice.payment.application.usecase.OrderedGiftCardStockUseCase;
 import com.hyoguoo.paymentservice.payment.application.usecase.PaymentLoadUseCase;
 import com.hyoguoo.paymentservice.payment.application.usecase.PaymentProcessorUseCase;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PaymentConfirmServiceImpl implements PaymentConfirmService {
 
-    private final OrderInfoMessageProducer orderInfoMessageProducer;
     private final PaymentLoadUseCase paymentLoadUseCase;
     private final PaymentProcessorUseCase paymentProcessorUseCase;
     private final OrderedGiftCardStockUseCase orderedGiftCardStockUseCase;
@@ -38,8 +36,6 @@ public class PaymentConfirmServiceImpl implements PaymentConfirmService {
 
         try {
             PaymentEvent completedPayment = processPayment(paymentEvent, command);
-
-            orderInfoMessageProducer.sendOrderCompleted(paymentEvent.getOrderInfoId());
 
             return PaymentConfirmResult.builder()
                     .amount(completedPayment.getTotalAmount())
@@ -70,12 +66,12 @@ public class PaymentConfirmServiceImpl implements PaymentConfirmService {
     }
 
     private void handleStockFailure(PaymentEvent paymentEvent) {
-        markAsFailAndNotifyFailure(paymentEvent);
+        paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
     }
 
     private void handleNonRetryableFailure(PaymentEvent paymentEvent) {
         orderedGiftCardStockUseCase.increaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
-        markAsFailAndNotifyFailure(paymentEvent);
+        paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
     }
 
     private void handleRetryableFailure(PaymentEvent paymentEvent) {
@@ -84,11 +80,6 @@ public class PaymentConfirmServiceImpl implements PaymentConfirmService {
 
     private void handleUnknownException(PaymentEvent paymentEvent) {
         orderedGiftCardStockUseCase.increaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
-        markAsFailAndNotifyFailure(paymentEvent);
-    }
-
-    private void markAsFailAndNotifyFailure(PaymentEvent paymentEvent) {
-        PaymentEvent failedPaymentEvent = paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
-        orderInfoMessageProducer.sendOrderFailed(failedPaymentEvent.getOrderInfoId());
+        paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
     }
 }
