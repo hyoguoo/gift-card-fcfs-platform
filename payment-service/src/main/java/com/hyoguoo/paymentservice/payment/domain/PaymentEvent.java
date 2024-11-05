@@ -1,8 +1,8 @@
 package com.hyoguoo.paymentservice.payment.domain;
 
 
+import com.hyoguoo.paymentservice.payment.application.dto.command.PaymentCheckoutCommand;
 import com.hyoguoo.paymentservice.payment.application.dto.command.PaymentConfirmCommand;
-import com.hyoguoo.paymentservice.payment.domain.dto.OrderInfo;
 import com.hyoguoo.paymentservice.payment.domain.dto.TossPaymentInfo;
 import com.hyoguoo.paymentservice.payment.domain.dto.enums.TossPaymentStatus;
 import com.hyoguoo.paymentservice.payment.domain.enums.PaymentEventStatus;
@@ -30,14 +30,12 @@ public class PaymentEvent {
 
     @Builder(builderMethodName = "requiredBuilder", buildMethodName = "requiredBuild")
     @SuppressWarnings("unused")
-    protected PaymentEvent(
-            OrderInfo orderInfo
-    ) {
-        this.buyerId = orderInfo.getBuyerId();
-        this.orderInfoId = orderInfo.getOrderInfoId();
-        this.orderedGiftCardId = orderInfo.getGiftCardId();
-        this.orderId = orderInfo.getOrderId();
-        this.totalAmount = orderInfo.getPaymentAmount();
+    protected PaymentEvent(PaymentCheckoutCommand command) {
+        this.buyerId = command.getBuyerId();
+        this.orderInfoId = command.getOrderInfoId();
+        this.orderedGiftCardId = command.getGiftCardId();
+        this.orderId = command.getOrderId();
+        this.totalAmount = command.getGiftCardPrice();
 
         this.status = PaymentEventStatus.READY;
     }
