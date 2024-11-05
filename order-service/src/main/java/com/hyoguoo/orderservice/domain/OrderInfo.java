@@ -36,10 +36,10 @@ public class OrderInfo {
 
         this.orderStatus = OrderStatus.PENDING;
 
-        validateNewOrder();
+        validateNewOrder(giftCardInfo);
     }
 
-    private void validateNewOrder() {
+    private void validateNewOrder(GiftCardInfo giftCardInfo) {
         if (this.buyerId == null || this.buyerId <= 0) {
             throw new IllegalArgumentException("Buyer ID is required");
         }
@@ -58,6 +58,10 @@ public class OrderInfo {
 
         if (this.orderedAt == null) {
             throw new IllegalArgumentException("Ordered at is required");
+        }
+
+        if (this.orderedAt.isBefore(giftCardInfo.getSaleStartAt())) {
+            throw new IllegalArgumentException("Order cannot be placed before sale start at");
         }
     }
 }
