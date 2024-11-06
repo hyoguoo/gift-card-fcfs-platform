@@ -1,5 +1,6 @@
 package com.hyoguoo.paymentservice.core.config;
 
+import com.hyoguoo.kafka.message.GiftCardPurchaseEventMessage;
 import com.hyoguoo.kafka.message.GiftCardStockDecreaseEventMessage;
 import com.hyoguoo.kafka.message.GiftCardStockRollbackEventMessage;
 import com.hyoguoo.kafka.message.OrderInfoCompletedMessage;
@@ -24,6 +25,9 @@ public class KafkaProducerConfig {
 
     @Value("${kafka.topics.order-info-failed}")
     private String orderInfoFailedTopic;
+
+    @Value("${kafka.topics.gift-card-purchase}")
+    private String giftCardPurchaseTopic;
 
     @Bean
     public KafkaTemplate<String, GiftCardStockDecreaseEventMessage> stockDecreaseKafkaTemplate(
@@ -54,6 +58,14 @@ public class KafkaProducerConfig {
             ProducerFactory<String, OrderInfoFailedMessage> producerFactory) {
         KafkaTemplate<String, OrderInfoFailedMessage> kafkaTemplate = new KafkaTemplate<>(producerFactory);
         kafkaTemplate.setDefaultTopic(orderInfoFailedTopic);
+        return kafkaTemplate;
+    }
+
+    @Bean
+    public KafkaTemplate<String, GiftCardPurchaseEventMessage> giftCardPurchaseKafkaTemplate(
+            ProducerFactory<String, GiftCardPurchaseEventMessage> producerFactory) {
+        KafkaTemplate<String, GiftCardPurchaseEventMessage> kafkaTemplate = new KafkaTemplate<>(producerFactory);
+        kafkaTemplate.setDefaultTopic(giftCardPurchaseTopic);
         return kafkaTemplate;
     }
 }

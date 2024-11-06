@@ -56,3 +56,4 @@ kafka:
     gift-card-stock-rollback: gift-card-rollback-topic
     order-info-completed: order-info-completed-topic
     order-info-failed: order-info-failed-topic
+    gift-card-purchase: gift-card-purchase-topic
