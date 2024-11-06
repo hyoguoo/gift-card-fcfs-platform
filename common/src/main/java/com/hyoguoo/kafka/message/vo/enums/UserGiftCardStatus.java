@@ -1,4 +1,4 @@
-package com.hyoguoo.userservice.user.domain.enums;
+package com.hyoguoo.kafka.message.vo.enums;
 
 import java.util.Arrays;
 import lombok.Getter;
@@ -16,7 +16,7 @@ public enum UserGiftCardStatus {
 
     private final String status;
 
-    public static UserGiftCardStatus from(String status) {
+    public static UserGiftCardStatus of(String status) {
         return Arrays.stream(UserGiftCardStatus.values())
                 .filter(s -> s.getStatus().equals(status))
                 .findFirst()

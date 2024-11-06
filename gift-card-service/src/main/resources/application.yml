@@ -54,6 +54,7 @@ kafka:
   topics:
     gift-card-stock-decrease: gift-card-decrease-topic
     gift-card-stock-rollback: gift-card-rollback-topic
+    gift-card-user-sync: gift-card-user-sync-topic
   groups:
     gift-card-stock-decrease: gift-card-decrease-group
     gift-card-stock-rollback: gift-card-rollback-group

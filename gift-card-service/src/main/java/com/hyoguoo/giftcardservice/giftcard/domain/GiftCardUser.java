@@ -24,17 +24,17 @@ public class GiftCardUser {
 
     @SuppressWarnings("unused")
     @Builder(builderMethodName = "requiredArgsBuilder", buildMethodName = "requiredArgsBuild")
-    public GiftCardUser(Long giftCardId, Long userId, LocalDateTime purchaseDate, Long totalBalance,
-            Integer validityDays) {
-        this.giftCardId = giftCardId;
+    public GiftCardUser(GiftCard giftCard, Long userId, LocalDateTime purchaseDate) {
+        this.giftCardId = giftCard.getId();
         this.userId = userId;
         this.purchaseDate = purchaseDate;
-        this.userGiftCardStatus = UserGiftCardStatus.ACTIVE;
-        this.remainingBalance = totalBalance;
-        this.totalBalance = totalBalance;
-        this.expirationDate = purchaseDate.plusDays(validityDays);
+        this.remainingBalance = giftCard.getTotalBalance();
+        this.totalBalance = giftCard.getTotalBalance();
+        this.expirationDate = purchaseDate.plusDays(giftCard.getValidityDays());
 
-        validateNewUserGiftCard(validityDays);
+        this.userGiftCardStatus = UserGiftCardStatus.ACTIVE;
+
+        validateNewUserGiftCard(giftCard.getValidityDays());
     }
 
     private void validateNewUserGiftCard(Integer validityDays) {

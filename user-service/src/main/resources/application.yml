@@ -49,3 +49,9 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+kafka:
+  topics:
+    gift-card-user-sync: gift-card-user-sync-topic
+  groups:
+    gift-card-user-sync: gift-card-user-sync-group

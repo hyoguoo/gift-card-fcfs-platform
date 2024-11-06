@@ -18,9 +18,13 @@ public class GiftCardLoadUseCase {
     private final GiftCardRepository giftCardRepository;
     private final GiftCardUserRepository giftCardUserRepository;
 
-    public GiftCardInfoResult getGiftCardInfo(Long giftCardId) {
-        GiftCard giftCard = giftCardRepository.findById(giftCardId)
+    public GiftCard getGiftCardById(Long giftCardId) {
+        return giftCardRepository.findById(giftCardId)
                 .orElseThrow(() -> new IllegalArgumentException("GiftCard not found"));
+    }
+
+    public GiftCardInfoResult getGiftCardInfo(Long giftCardId) {
+        GiftCard giftCard = getGiftCardById(giftCardId);
 
         return GiftCardInfoResult.builder()
                 .giftCardId(giftCard.getId())
@@ -36,8 +40,8 @@ public class GiftCardLoadUseCase {
                 command.getSize());
     }
 
-    public GiftCardUser loadGiftCard(Long userGiftCardId) {
-        return giftCardUserRepository.findById(userGiftCardId)
+    public GiftCardUser getGiftCardUserById(Long giftCardUserId) {
+        return giftCardUserRepository.findById(giftCardUserId)
                 .orElseThrow(() -> new IllegalArgumentException("GiftCardUser not found"));
     }
 }
