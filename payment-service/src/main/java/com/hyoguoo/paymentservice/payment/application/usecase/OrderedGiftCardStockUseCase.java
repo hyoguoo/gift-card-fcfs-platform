@@ -14,8 +14,8 @@ public class OrderedGiftCardStockUseCase {
     private final OrderedGiftCardStockMessageProducer orderedGiftCardStockMessageProducer;
 
     public void decreaseStockForOrders(Long giftCardId, Integer quantity) throws PaymentOrderedStockException {
-        orderedGiftCardStockMessageProducer.sendGiftCardStockDecreaseEventMessage(giftCardId, quantity);
         orderedGiftCardStockRepository.decreaseStockForOrders(giftCardId, quantity);
+        orderedGiftCardStockMessageProducer.sendGiftCardStockDecreaseEventMessage(giftCardId, quantity);
     }
 
     public void increaseStockForOrders(Long giftCardId, Integer quantity) {
