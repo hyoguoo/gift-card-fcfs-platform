@@ -1,5 +1,6 @@
 package com.hyoguoo.userservice.user.domain.enums;
 
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -14,4 +15,11 @@ public enum UserGiftCardStatus {
     CANCELED("CANCELED");
 
     private final String status;
+
+    public static UserGiftCardStatus from(String status) {
+        return Arrays.stream(UserGiftCardStatus.values())
+                .filter(s -> s.getStatus().equals(status))
+                .findFirst()
+                .orElseThrow();
+    }
 }
