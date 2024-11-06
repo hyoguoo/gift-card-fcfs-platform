@@ -2,6 +2,7 @@ package com.hyoguoo.giftcardservice.giftcard.application.usecase;
 
 import com.hyoguoo.giftcardservice.core.common.application.port.LocalDateTimeProvider;
 import com.hyoguoo.giftcardservice.giftcard.application.port.GiftCardUserRepository;
+import com.hyoguoo.giftcardservice.giftcard.application.port.GiftCardUserSyncMessageProducer;
 import com.hyoguoo.giftcardservice.giftcard.domain.GiftCard;
 import com.hyoguoo.giftcardservice.giftcard.domain.GiftCardUser;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ public class GiftCardUserCreateUseCase {
 
     private final GiftCardUserRepository giftCardUserRepository;
     private final LocalDateTimeProvider localDateTimeProvider;
+    private final GiftCardUserSyncMessageProducer giftCardUserSyncMessageProducer;
 
     public void createNewGiftCardUser(GiftCard giftCard, Long userId) {
         GiftCardUser giftCardUser = GiftCardUser.requiredArgsBuilder()
@@ -21,6 +23,8 @@ public class GiftCardUserCreateUseCase {
                 .purchaseDate(localDateTimeProvider.now())
                 .requiredArgsBuild();
 
-        giftCardUserRepository.saveOrUpdate(giftCardUser);
+        GiftCardUser savedGiftCardUser = giftCardUserRepository.saveOrUpdate(giftCardUser);
+
+        giftCardUserSyncMessageProducer.sendGiftCardUserUpsertEventMessage(savedGiftCardUser);
     }
 }
