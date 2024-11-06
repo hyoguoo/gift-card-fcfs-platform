@@ -3,6 +3,7 @@ package com.hyoguoo.paymentservice.payment.application.usecase;
 import com.hyoguoo.paymentservice.core.common.application.port.LocalDateTimeProvider;
 import com.hyoguoo.paymentservice.payment.application.dto.command.PaymentConfirmCommand;
 import com.hyoguoo.paymentservice.payment.application.dto.command.TossPaymentConfirmCommand;
+import com.hyoguoo.paymentservice.payment.application.port.GiftCardPurchaseMessageProducer;
 import com.hyoguoo.paymentservice.payment.application.port.OrderInfoMessageProducer;
 import com.hyoguoo.paymentservice.payment.application.port.PaymentEventRepository;
 import com.hyoguoo.paymentservice.payment.application.port.TossPaymentGateway;
@@ -23,6 +24,7 @@ public class PaymentProcessorUseCase {
     private final LocalDateTimeProvider localDateTimeProvider;
     private final TossPaymentGateway tossPaymentGateway;
     private final OrderInfoMessageProducer orderInfoMessageProducer;
+    private final GiftCardPurchaseMessageProducer giftCardPurchaseMessageProducer;
 
     public PaymentEvent executePayment(PaymentEvent paymentEvent, String paymentKey) {
         paymentEvent.execute(paymentKey, localDateTimeProvider.now());
@@ -65,6 +67,10 @@ public class PaymentProcessorUseCase {
         paymentEvent.done(approvedAt);
         PaymentEvent savedPaymentEvent = paymentEventRepository.saveOrUpdate(paymentEvent);
         orderInfoMessageProducer.sendOrderCompleted(savedPaymentEvent.getOrderInfoId());
+        giftCardPurchaseMessageProducer.sendGiftCardPurchaseEventMessage(
+                savedPaymentEvent.getOrderedGiftCardId(),
+                savedPaymentEvent.getBuyerId()
+        );
 
         return savedPaymentEvent;
     }
