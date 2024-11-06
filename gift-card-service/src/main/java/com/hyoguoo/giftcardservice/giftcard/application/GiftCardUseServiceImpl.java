@@ -16,7 +16,7 @@ public class GiftCardUseServiceImpl implements GiftCardUseService {
     private final GiftCardUsageUseCase giftCardUsageUseCase;
 
     public void useGiftCard(GiftCardUseCommand command) {
-        GiftCardUser giftCardUser = giftCardLoadUseCase.loadGiftCard(command.getUserGiftCardId());
+        GiftCardUser giftCardUser = giftCardLoadUseCase.getGiftCardUserById(command.getGiftCardUserId());
 
         giftCardUsageUseCase.useGiftCard(giftCardUser, command);
     }

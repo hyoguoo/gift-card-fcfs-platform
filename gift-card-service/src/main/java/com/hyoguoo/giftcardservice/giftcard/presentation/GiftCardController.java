@@ -36,7 +36,7 @@ public class GiftCardController {
     @PostMapping("/gift-card/use")
     public void useGiftCard(@RequestBody GiftCardUseRequest request, @RequestHeader("X-USER-ID") Long userId) {
         GiftCardUseCommand command = GiftCardUseCommand.builder()
-                .userGiftCardId(request.getUserGiftCardId())
+                .giftCardUserId(request.getUserGiftCardId())
                 .usedAmount(request.getUsedAmount())
                 .usedUserId(userId)
                 .build();

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 public class GiftCardUseCommand {
 
-    private final Long userGiftCardId;
+    private final Long giftCardUserId;
     private final Long usedUserId;
     private final Long usedAmount;
 }

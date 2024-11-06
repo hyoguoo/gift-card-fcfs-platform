@@ -40,8 +40,8 @@ public class GiftCardLoadUseCase {
                 command.getSize());
     }
 
-    public GiftCardUser loadGiftCard(Long userGiftCardId) {
-        return giftCardUserRepository.findById(userGiftCardId)
+    public GiftCardUser getGiftCardUserById(Long giftCardUserId) {
+        return giftCardUserRepository.findById(giftCardUserId)
                 .orElseThrow(() -> new IllegalArgumentException("GiftCardUser not found"));
     }
 }
