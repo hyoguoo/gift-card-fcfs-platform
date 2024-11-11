@@ -54,9 +54,10 @@ public class PaymentConfirmServiceImpl implements PaymentConfirmService {
             handleNonRetryableFailure(paymentEvent);
             throw PaymentConfirmException.of(PaymentErrorCode.TOSS_NON_RETRYABLE_ERROR);
         } catch (PaymentConfirmationException e) {
-            handleValidationFailure(paymentEvent);
+            handleConfirmationFailure(paymentEvent);
             throw PaymentConfirmException.of(PaymentErrorCode.INVALID_STATUS_TO_CONFIRM);
         } catch (PaymentDoneValidateException e) {
+            handleDoneValidationFailure(paymentEvent);
             throw PaymentConfirmException.of(PaymentErrorCode.INVALID_STATUS_TO_DONE);
         } catch (Exception e) {
             handleUnknownException(paymentEvent);
@@ -77,29 +78,41 @@ public class PaymentConfirmServiceImpl implements PaymentConfirmService {
     }
 
     private void handleStockFailure(PaymentEvent paymentEvent) {
+        log.info("Ordered gift card stock is not enough for Order ID: {}, GiftCard ID: {}",
+                paymentEvent.getOrderId(), paymentEvent.getOrderedGiftCardId());
         paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
     }
 
     private void handleNonRetryableFailure(PaymentEvent paymentEvent) {
-        log.info("Non-retryable failure");
+        log.info("Non-retryable failure occurred for Order ID: {}, GiftCard ID: {}",
+                paymentEvent.getOrderId(), paymentEvent.getOrderedGiftCardId());
         orderedGiftCardStockUseCase.increaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
         paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
     }
 
     private void handleRetryableFailure(PaymentEvent paymentEvent) {
-        log.info("Retryable failure");
+        log.info("Retryable failure detected for Order ID: {}, retrying payment confirmation",
+                paymentEvent.getOrderId());
         paymentProcessorUseCase.markPaymentAsUnknown(paymentEvent);
     }
 
-    private void handleValidationFailure(PaymentEvent paymentEvent) {
-        log.info("Validation failed");
+    private void handleConfirmationFailure(PaymentEvent paymentEvent) {
+        log.info(
+                "Payment confirmation validation failed for Order ID: {}, reverting stock and marking payment as failed",
+                paymentEvent.getOrderId());
         orderedGiftCardStockUseCase.increaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
         paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
     }
 
     private void handleUnknownException(PaymentEvent paymentEvent) {
-        log.error("Unknown exception occurred");
+        log.error("Unknown exception occurred during processing for Order ID: {}, GiftCard ID: {}",
+                paymentEvent.getOrderId(), paymentEvent.getOrderedGiftCardId());
         orderedGiftCardStockUseCase.increaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
         paymentProcessorUseCase.markPaymentAsFail(paymentEvent);
+    }
+
+    private void handleDoneValidationFailure(PaymentEvent paymentEvent) {
+        log.error("Validation failure after payment completion for Order ID: {}",
+                paymentEvent.getOrderId());
     }
 }
