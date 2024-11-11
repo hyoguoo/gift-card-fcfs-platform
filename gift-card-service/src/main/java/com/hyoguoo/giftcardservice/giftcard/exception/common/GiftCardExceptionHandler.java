@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GiftCardExceptionHandler {
 
     @ExceptionHandler(GiftCardFoundException.class)
-    public ResponseEntity<ErrorResponse> catchRuntimeException(GiftCardFoundException e) {
+    public ResponseEntity<ErrorResponse> catchGiftCardFoundException(GiftCardFoundException e) {
         log.warn(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -32,7 +32,7 @@ public class GiftCardExceptionHandler {
     }
 
     @ExceptionHandler(GiftCardUserFoundException.class)
-    public ResponseEntity<ErrorResponse> catchRuntimeException(GiftCardUserFoundException e) {
+    public ResponseEntity<ErrorResponse> catchGiftCardUserFoundException(GiftCardUserFoundException e) {
         log.warn(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -44,7 +44,7 @@ public class GiftCardExceptionHandler {
     }
 
     @ExceptionHandler(GiftCardValidationException.class)
-    public ResponseEntity<ErrorResponse> catchRuntimeException(GiftCardValidationException e) {
+    public ResponseEntity<ErrorResponse> catchGiftCardValidationException(GiftCardValidationException e) {
         log.warn(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -56,7 +56,7 @@ public class GiftCardExceptionHandler {
     }
 
     @ExceptionHandler(GiftCardUserValidationException.class)
-    public ResponseEntity<ErrorResponse> catchRuntimeException(GiftCardUserValidationException e) {
+    public ResponseEntity<ErrorResponse> catchGiftCardUserValidationException(GiftCardUserValidationException e) {
         log.warn(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -68,7 +68,7 @@ public class GiftCardExceptionHandler {
     }
 
     @ExceptionHandler(GiftCardUserUseValidationException.class)
-    public ResponseEntity<ErrorResponse> catchRuntimeException(GiftCardUserUseValidationException e) {
+    public ResponseEntity<ErrorResponse> catchGiftCardUserUseValidationException(GiftCardUserUseValidationException e) {
         log.warn(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
