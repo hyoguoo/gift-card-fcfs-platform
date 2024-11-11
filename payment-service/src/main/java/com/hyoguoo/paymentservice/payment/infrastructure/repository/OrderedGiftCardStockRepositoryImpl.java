@@ -2,6 +2,7 @@ package com.hyoguoo.paymentservice.payment.infrastructure.repository;
 
 import com.hyoguoo.paymentservice.payment.application.port.OrderedGiftCardStockRepository;
 import com.hyoguoo.paymentservice.payment.exception.PaymentOrderedStockException;
+import com.hyoguoo.paymentservice.payment.exception.common.PaymentErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -23,7 +24,7 @@ public class OrderedGiftCardStockRepositoryImpl implements OrderedGiftCardStockR
         Long stock = stringRedisTemplate.execute(decreaseStockScript,
                 List.of(GIFT_CARD_STOCK_PREFIX + giftCardId), String.valueOf(quantity));
         if (stock == null || stock == -1) {
-            throw new PaymentOrderedStockException();
+            throw PaymentOrderedStockException.of(PaymentErrorCode.ORDERED_GIFT_CARD_STOCK_NOT_ENOUGH);
         }
     }
 

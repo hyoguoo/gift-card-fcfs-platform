@@ -6,7 +6,12 @@ import com.hyoguoo.paymentservice.payment.application.dto.command.PaymentConfirm
 import com.hyoguoo.paymentservice.payment.domain.dto.TossPaymentInfo;
 import com.hyoguoo.paymentservice.payment.domain.dto.enums.TossPaymentStatus;
 import com.hyoguoo.paymentservice.payment.domain.enums.PaymentEventStatus;
-import com.hyoguoo.paymentservice.payment.exception.PaymentValidateException;
+import com.hyoguoo.paymentservice.payment.exception.PaymentConfirmationException;
+import com.hyoguoo.paymentservice.payment.exception.PaymentDoneValidateException;
+import com.hyoguoo.paymentservice.payment.exception.PaymentExecuteValidateException;
+import com.hyoguoo.paymentservice.payment.exception.PaymentFailValidateException;
+import com.hyoguoo.paymentservice.payment.exception.PaymentUnknownValidateException;
+import com.hyoguoo.paymentservice.payment.exception.common.PaymentErrorCode;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -45,42 +50,43 @@ public class PaymentEvent {
         if (this.status != PaymentEventStatus.READY &&
                 this.status != PaymentEventStatus.IN_PROGRESS &&
                 this.status != PaymentEventStatus.UNKNOWN) {
-            throw new PaymentValidateException();
+            throw PaymentExecuteValidateException.of(PaymentErrorCode.INVALID_EXECUTION_STATUS);
         }
         this.paymentKey = paymentKey;
         this.status = PaymentEventStatus.IN_PROGRESS;
         this.executedAt = executedAt;
     }
 
-    public void validateCompletionStatus(PaymentConfirmCommand paymentConfirmCommand, TossPaymentInfo paymentInfo) {
+    public void validateConfirmation(PaymentConfirmCommand paymentConfirmCommand, TossPaymentInfo paymentInfo)
+            throws PaymentConfirmationException {
         if (!this.buyerId.equals(paymentConfirmCommand.getBuyerId())) {
-            throw new PaymentValidateException();
+            throw PaymentConfirmationException.of(PaymentErrorCode.BUYER_ID_NOT_MATCH);
         }
 
         if (!paymentConfirmCommand.getPaymentKey().equals(paymentInfo.getPaymentKey()) ||
                 !paymentConfirmCommand.getPaymentKey().equals(this.paymentKey)) {
-            throw new PaymentValidateException();
+            throw PaymentConfirmationException.of(PaymentErrorCode.PAYMENT_KEY_NOT_MATCH);
         }
 
         if (!paymentConfirmCommand.getAmount().equals(this.totalAmount)) {
-            throw new PaymentValidateException();
+            throw PaymentConfirmationException.of(PaymentErrorCode.INVALID_TOTAL_AMOUNT);
         }
 
         if (!this.orderId.equals(paymentConfirmCommand.getOrderId())) {
-            throw new PaymentValidateException();
+            throw PaymentConfirmationException.of(PaymentErrorCode.INVALID_ORDER_ID);
         }
 
         if (paymentInfo.getPaymentDetails().getStatus() != TossPaymentStatus.IN_PROGRESS &&
                 paymentInfo.getPaymentDetails().getStatus() != TossPaymentStatus.DONE) {
-            throw new PaymentValidateException();
+            throw PaymentConfirmationException.of(PaymentErrorCode.INVALID_STATUS_TO_EXECUTE);
         }
     }
 
-    public void done(LocalDateTime approvedAt) {
+    public void done(LocalDateTime approvedAt) throws PaymentDoneValidateException {
         if (this.status != PaymentEventStatus.IN_PROGRESS &&
                 this.status != PaymentEventStatus.DONE &&
                 this.status != PaymentEventStatus.UNKNOWN) {
-            throw new PaymentValidateException();
+            throw PaymentDoneValidateException.of(PaymentErrorCode.INVALID_STATUS_TO_DONE);
         }
         this.approvedAt = approvedAt;
         this.status = PaymentEventStatus.DONE;
@@ -89,7 +95,7 @@ public class PaymentEvent {
     public void fail() {
         if (this.status != PaymentEventStatus.IN_PROGRESS &&
                 this.status != PaymentEventStatus.UNKNOWN) {
-            throw new PaymentValidateException();
+            throw PaymentFailValidateException.of(PaymentErrorCode.INVALID_STATUS_TO_FAIL);
         }
         this.status = PaymentEventStatus.FAILED;
     }
@@ -98,7 +104,7 @@ public class PaymentEvent {
         if (this.status != PaymentEventStatus.READY &&
                 this.status != PaymentEventStatus.IN_PROGRESS &&
                 this.status != PaymentEventStatus.UNKNOWN) {
-            throw new PaymentValidateException();
+            throw PaymentUnknownValidateException.of(PaymentErrorCode.INVALID_STATUS_TO_UNKNOWN);
         }
         this.status = PaymentEventStatus.UNKNOWN;
     }

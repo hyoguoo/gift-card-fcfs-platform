@@ -4,17 +4,17 @@ import com.hyoguoo.paymentservice.payment.exception.common.PaymentErrorCode;
 import lombok.Getter;
 
 @Getter
-public class PaymentOrderedStockException extends Exception {
+public class PaymentConfirmException extends RuntimeException {
 
     private final String code;
     private final String message;
 
-    private PaymentOrderedStockException(PaymentErrorCode code) {
+    private PaymentConfirmException(PaymentErrorCode code) {
         this.code = code.getCode();
         this.message = code.getMessage();
     }
 
-    public static PaymentOrderedStockException of(PaymentErrorCode errorCode) {
-        return new PaymentOrderedStockException(errorCode);
+    public static PaymentConfirmException of(PaymentErrorCode errorCode) {
+        return new PaymentConfirmException(errorCode);
     }
 }
