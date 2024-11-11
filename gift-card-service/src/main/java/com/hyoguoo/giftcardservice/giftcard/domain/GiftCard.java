@@ -1,5 +1,7 @@
 package com.hyoguoo.giftcardservice.giftcard.domain;
 
+import com.hyoguoo.giftcardservice.giftcard.exception.GiftCardValidationException;
+import com.hyoguoo.giftcardservice.giftcard.exception.common.GiftCardErrorCode;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,27 +36,27 @@ public class GiftCard {
 
     private void validateNewGiftCard() {
         if (this.giftCardName == null || this.giftCardName.isEmpty()) {
-            throw new IllegalArgumentException("Gift card name is required");
+            throw GiftCardValidationException.of(GiftCardErrorCode.GIFT_CARD_NAME_REQUIRED);
         }
 
         if (this.quantity == null || this.quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than 0");
+            throw GiftCardValidationException.of(GiftCardErrorCode.QUANTITY_INVALID);
         }
 
         if (this.price == null || this.price <= 0) {
-            throw new IllegalArgumentException("Price must be greater than 0");
+            throw GiftCardValidationException.of(GiftCardErrorCode.PRICE_INVALID);
         }
 
         if (this.totalBalance == null || this.totalBalance <= 0) {
-            throw new IllegalArgumentException("Total balance must be greater than 0");
+            throw GiftCardValidationException.of(GiftCardErrorCode.TOTAL_BALANCE_INVALID);
         }
 
         if (this.validityDays == null || this.validityDays <= 0) {
-            throw new IllegalArgumentException("Validity days must be greater than 0");
+            throw GiftCardValidationException.of(GiftCardErrorCode.VALIDITY_DAYS_INVALID);
         }
 
         if (this.saleStartAt == null) {
-            throw new IllegalArgumentException("Sale start at is required");
+            throw GiftCardValidationException.of(GiftCardErrorCode.SALE_START_AT_REQUIRED);
         }
     }
 }
