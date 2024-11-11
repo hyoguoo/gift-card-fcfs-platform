@@ -1,6 +1,9 @@
 package com.hyoguoo.giftcardservice.giftcard.domain;
 
 import com.hyoguoo.giftcardservice.giftcard.domain.enums.UserGiftCardStatus;
+import com.hyoguoo.giftcardservice.giftcard.exception.GiftCardUserUseValidationException;
+import com.hyoguoo.giftcardservice.giftcard.exception.GiftCardUserValidationException;
+import com.hyoguoo.giftcardservice.giftcard.exception.common.GiftCardErrorCode;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -39,56 +42,55 @@ public class GiftCardUser {
 
     private void validateNewUserGiftCard(Integer validityDays) {
         if (this.giftCardId == null || this.giftCardId <= 0) {
-            throw new IllegalArgumentException("Gift card ID is required");
+            throw GiftCardUserValidationException.of(GiftCardErrorCode.GIFT_CARD_ID_REQUIRED);
         }
 
         if (this.userId == null || this.userId <= 0) {
-            throw new IllegalArgumentException("User ID is required");
+            throw GiftCardUserValidationException.of(GiftCardErrorCode.USER_ID_REQUIRED);
         }
 
         if (this.purchaseDate == null) {
-            throw new IllegalArgumentException("Purchase date is required");
+            throw GiftCardUserValidationException.of(GiftCardErrorCode.PURCHASE_DATE_REQUIRED);
         }
 
         if (this.remainingBalance == null || this.remainingBalance <= 0) {
-            throw new IllegalArgumentException("Remaining balance must be greater than 0");
+            throw GiftCardUserValidationException.of(GiftCardErrorCode.REMAINING_BALANCE_INVALID);
         }
 
         if (this.totalBalance == null || this.totalBalance <= 0) {
-            throw new IllegalArgumentException("Total balance must be greater than 0");
+            throw GiftCardUserValidationException.of(GiftCardErrorCode.TOTAL_BALANCE_INVALID);
         }
 
         if (validityDays == null || validityDays <= 0) {
-            throw new IllegalArgumentException("Validity days must be greater than 0");
+            throw GiftCardUserValidationException.of(GiftCardErrorCode.VALIDITY_DAYS_INVALID);
         }
     }
 
-    // 낙관적 락 사용
     public void useBalance(Long amount, LocalDateTime now, Long usedUserId) {
         if (userGiftCardStatus == UserGiftCardStatus.USED ||
                 userGiftCardStatus == UserGiftCardStatus.EXPIRED ||
                 userGiftCardStatus == UserGiftCardStatus.CANCELED) {
-            throw new IllegalStateException("Cannot use balance in current status: " + userGiftCardStatus);
+            throw GiftCardUserUseValidationException.of(GiftCardErrorCode.USER_STATUS_INVALID);
         }
 
         if (now.isAfter(this.expirationDate)) {
-            throw new IllegalStateException("Gift card has expired and cannot be used");
+            throw GiftCardUserUseValidationException.of(GiftCardErrorCode.EXPIRED_GIFT_CARD);
         }
 
         if (this.purchaseDate.isAfter(now)) {
-            throw new IllegalStateException("Gift card has not been purchased yet");
+            throw GiftCardUserUseValidationException.of(GiftCardErrorCode.PURCHASE_DATE_INVALID);
         }
 
         if (!this.userId.equals(usedUserId)) {
-            throw new IllegalArgumentException("User ID does not match");
+            throw GiftCardUserUseValidationException.of(GiftCardErrorCode.USER_ID_MISMATCH);
         }
 
         if (amount == null || amount <= 0) {
-            throw new IllegalArgumentException("Usage amount must be greater than 0");
+            throw GiftCardUserUseValidationException.of(GiftCardErrorCode.USAGE_AMOUNT_INVALID);
         }
 
         if (remainingBalance < amount) {
-            throw new IllegalArgumentException("Insufficient balance");
+            throw GiftCardUserUseValidationException.of(GiftCardErrorCode.INSUFFICIENT_BALANCE);
         }
 
         this.remainingBalance -= amount;

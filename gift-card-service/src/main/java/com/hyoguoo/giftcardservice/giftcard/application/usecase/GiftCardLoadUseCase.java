@@ -7,6 +7,9 @@ import com.hyoguoo.giftcardservice.giftcard.domain.GiftCard;
 import com.hyoguoo.giftcardservice.giftcard.domain.GiftCardUser;
 import com.hyoguoo.giftcardservice.giftcard.domain.record.GiftCardUserRecord;
 import com.hyoguoo.giftcardservice.giftcard.application.port.GiftCardUserRepository;
+import com.hyoguoo.giftcardservice.giftcard.exception.GiftCardFoundException;
+import com.hyoguoo.giftcardservice.giftcard.exception.GiftCardUserFoundException;
+import com.hyoguoo.giftcardservice.giftcard.exception.common.GiftCardErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -20,7 +23,7 @@ public class GiftCardLoadUseCase {
 
     public GiftCard getGiftCardById(Long giftCardId) {
         return giftCardRepository.findById(giftCardId)
-                .orElseThrow(() -> new IllegalArgumentException("GiftCard not found"));
+                .orElseThrow(() -> GiftCardFoundException.of(GiftCardErrorCode.GIFT_CARD_NOT_FOUND));
     }
 
     public GiftCardInfoResult getGiftCardInfo(Long giftCardId) {
@@ -42,6 +45,6 @@ public class GiftCardLoadUseCase {
 
     public GiftCardUser getGiftCardUserById(Long giftCardUserId) {
         return giftCardUserRepository.findById(giftCardUserId)
-                .orElseThrow(() -> new IllegalArgumentException("GiftCardUser not found"));
+                .orElseThrow(() -> GiftCardUserFoundException.of(GiftCardErrorCode.GIFT_CARD_USER_NOT_FOUND));
     }
 }

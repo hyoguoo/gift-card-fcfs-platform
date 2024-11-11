@@ -3,6 +3,10 @@ package com.hyoguoo.orderservice.order.domain;
 import com.hyoguoo.orderservice.order.application.dto.command.CheckoutCommand;
 import com.hyoguoo.orderservice.order.domain.dto.GiftCardInfo;
 import com.hyoguoo.orderservice.order.domain.enums.OrderStatus;
+import com.hyoguoo.orderservice.order.exception.OrderCompleteValidationException;
+import com.hyoguoo.orderservice.order.exception.OrderFailValidationException;
+import com.hyoguoo.orderservice.order.exception.OrderValidationException;
+import com.hyoguoo.orderservice.order.exception.common.OrderErrorCode;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -41,34 +45,34 @@ public class OrderInfo {
 
     private void validateNewOrder(GiftCardInfo giftCardInfo) {
         if (this.buyerId == null || this.buyerId <= 0) {
-            throw new IllegalArgumentException("Buyer ID is required");
+            throw OrderValidationException.of(OrderErrorCode.BUYER_ID_REQUIRED);
         }
 
         if (this.giftCardId == null || this.giftCardId <= 0) {
-            throw new IllegalArgumentException("Gift card ID is required");
+            throw OrderValidationException.of(OrderErrorCode.GIFT_CARD_ID_REQUIRED);
         }
 
         if (this.paymentAmount == null || this.paymentAmount < 0) {
-            throw new IllegalArgumentException("Payment amount must be greater than or equal to 0");
+            throw OrderValidationException.of(OrderErrorCode.PAYMENT_AMOUNT_INVALID);
         }
 
         if (this.orderId == null || this.orderId.isEmpty()) {
-            throw new IllegalArgumentException("Order ID is required");
+            throw OrderValidationException.of(OrderErrorCode.ORDER_ID_REQUIRED);
         }
 
         if (this.orderedAt == null) {
-            throw new IllegalArgumentException("Ordered at is required");
+            throw OrderValidationException.of(OrderErrorCode.ORDERED_AT_REQUIRED);
         }
 
         if (this.orderedAt.isBefore(giftCardInfo.getSaleStartAt())) {
-            throw new IllegalArgumentException("Order cannot be placed before sale start at");
+            throw OrderValidationException.of(OrderErrorCode.ORDER_BEFORE_SALE_START);
         }
     }
 
     public void completeOrder() {
         if (this.orderStatus != OrderStatus.PENDING &&
                 this.orderStatus != OrderStatus.COMPLETED) {
-            throw new IllegalStateException("Order status must be PENDING to complete");
+            throw OrderCompleteValidationException.of(OrderErrorCode.ORDER_STATUS_PENDING_REQUIRED);
         }
         this.orderStatus = OrderStatus.COMPLETED;
     }
@@ -76,7 +80,7 @@ public class OrderInfo {
     public void failOrder() {
         if (this.orderStatus != OrderStatus.PENDING &&
                 this.orderStatus != OrderStatus.FAILED) {
-            throw new IllegalStateException("Order status must be PENDING to fail");
+            throw OrderFailValidationException.of(OrderErrorCode.ORDER_STATUS_PENDING_REQUIRED);
         }
         this.orderStatus = OrderStatus.FAILED;
     }

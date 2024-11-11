@@ -21,20 +21,20 @@ public class UserGiftCardEventConsumer {
     @KafkaListener(topics = "${kafka.topics.gift-card-user-sync}", groupId = "${kafka.groups.gift-card-user-sync}")
     public void consumeGiftCardUserSyncEvent(GiftCardUserEventMessage message) {
         log.info("Consuming {} user gift card id: {}", message.getEventType(), message.getData().getId());
-        GiftCardUserEventData data = message.getData();
-        UserGiftCardUpsertCommand command = UserGiftCardUpsertCommand.builder()
-                .id(data.getId())
-                .giftCardId(data.getGiftCardId())
-                .userId(data.getUserId())
-                .purchaseDate(data.getPurchaseDate())
-                .expirationDate(data.getExpirationDate())
-                .usedDate(data.getUsedDate())
-                .remainingBalance(data.getRemainingBalance())
-                .totalBalance(data.getTotalBalance())
-                .userGiftCardStatus(UserGiftCardStatus.from(data.getUserGiftCardStatus().getStatus()))
-                .build();
 
         if (message.getEventType() == EventType.UPSERT) {
+            GiftCardUserEventData data = message.getData();
+            UserGiftCardUpsertCommand command = UserGiftCardUpsertCommand.builder()
+                    .id(data.getId())
+                    .giftCardId(data.getGiftCardId())
+                    .userId(data.getUserId())
+                    .purchaseDate(data.getPurchaseDate())
+                    .expirationDate(data.getExpirationDate())
+                    .usedDate(data.getUsedDate())
+                    .remainingBalance(data.getRemainingBalance())
+                    .totalBalance(data.getTotalBalance())
+                    .userGiftCardStatus(UserGiftCardStatus.from(data.getUserGiftCardStatus().getStatus()))
+                    .build();
             userGiftCardSyncService.upsertUserGiftCard(command);
         }
     }

@@ -10,6 +10,8 @@ import com.hyoguoo.paymentservice.payment.application.port.TossPaymentGateway;
 import com.hyoguoo.paymentservice.payment.domain.PaymentEvent;
 import com.hyoguoo.paymentservice.payment.domain.dto.TossPaymentInfo;
 import com.hyoguoo.paymentservice.payment.domain.dto.enums.PaymentConfirmResultStatus;
+import com.hyoguoo.paymentservice.payment.exception.PaymentConfirmationException;
+import com.hyoguoo.paymentservice.payment.exception.PaymentDoneValidateException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentTossNonRetryableException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentTossRetryableException;
 import java.time.LocalDateTime;
@@ -34,12 +36,12 @@ public class PaymentProcessorUseCase {
     public void validateCompletionStatus(
             PaymentEvent paymentEvent,
             PaymentConfirmCommand paymentConfirmCommand
-    ) {
+    ) throws PaymentConfirmationException {
         TossPaymentInfo tossPaymentInfo = tossPaymentGateway.getPaymentInfoByOrderId(
                 paymentConfirmCommand.getOrderId()
         );
 
-        paymentEvent.validateCompletionStatus(paymentConfirmCommand, tossPaymentInfo);
+        paymentEvent.validateConfirmation(paymentConfirmCommand, tossPaymentInfo);
     }
 
     public TossPaymentInfo confirmPaymentWithGateway(PaymentConfirmCommand paymentConfirmCommand)
@@ -58,12 +60,15 @@ public class PaymentProcessorUseCase {
 
         return switch (paymentConfirmResultStatus) {
             case PaymentConfirmResultStatus.SUCCESS -> tossPaymentInfo;
-            case PaymentConfirmResultStatus.RETRYABLE_FAILURE -> throw new PaymentTossRetryableException();
-            case PaymentConfirmResultStatus.NON_RETRYABLE_FAILURE -> throw new PaymentTossNonRetryableException();
+            case PaymentConfirmResultStatus.RETRYABLE_FAILURE ->
+                    throw PaymentTossRetryableException.of(tossPaymentInfo.getPaymentFailure());
+            case PaymentConfirmResultStatus.NON_RETRYABLE_FAILURE ->
+                    throw PaymentTossNonRetryableException.of(tossPaymentInfo.getPaymentFailure());
         };
     }
 
-    public PaymentEvent markPaymentAsDone(PaymentEvent paymentEvent, LocalDateTime approvedAt) {
+    public PaymentEvent markPaymentAsDone(PaymentEvent paymentEvent, LocalDateTime approvedAt)
+            throws PaymentDoneValidateException {
         paymentEvent.done(approvedAt);
         PaymentEvent savedPaymentEvent = paymentEventRepository.saveOrUpdate(paymentEvent);
         orderInfoMessageProducer.sendOrderCompleted(savedPaymentEvent.getOrderInfoId());
