@@ -9,6 +9,8 @@ import com.hyoguoo.orderservice.order.application.usecase.OrderedGiftCardLoadUse
 import com.hyoguoo.orderservice.order.application.usecase.PaymentCheckoutUseCase;
 import com.hyoguoo.orderservice.order.domain.OrderInfo;
 import com.hyoguoo.orderservice.order.domain.dto.GiftCardInfo;
+import com.hyoguoo.orderservice.order.exception.OrderErrorDecodeException;
+import com.hyoguoo.orderservice.order.exception.OrderPaymentException;
 import com.hyoguoo.orderservice.order.presentation.port.OrderCheckoutService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +33,7 @@ public class OrderCheckoutServiceImpl implements OrderCheckoutService {
 
         try {
             checkoutPayment(command, savedOrderInfo, giftCardInfo);
-        } catch (Exception e) {
+        } catch (OrderPaymentException | OrderErrorDecodeException e) {
             handleUnknownException(savedOrderInfo);
             throw e;
         }
