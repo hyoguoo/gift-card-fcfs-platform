@@ -4,6 +4,7 @@ import com.hyoguoo.orderservice.core.common.exception.ErrorResponse;
 import com.hyoguoo.orderservice.order.exception.OrderCompleteValidationException;
 import com.hyoguoo.orderservice.order.exception.OrderFailValidationException;
 import com.hyoguoo.orderservice.order.exception.OrderFoundException;
+import com.hyoguoo.orderservice.order.exception.OrderPaymentException;
 import com.hyoguoo.orderservice.order.exception.OrderValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -59,6 +60,18 @@ public class OrderExceptionHandler {
         log.warn(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(
+                                e.getCode(),
+                                e.getMessage()
+                        )
+                );
+    }
+
+    @ExceptionHandler(OrderPaymentException.class)
+    public ResponseEntity<ErrorResponse> catchOrderPaymentException(OrderPaymentException e) {
+        log.warn(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(
                                 e.getCode(),
                                 e.getMessage()
