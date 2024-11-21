@@ -17,12 +17,14 @@ import com.hyoguoo.paymentservice.payment.exception.common.PaymentErrorCode;
 import com.hyoguoo.paymentservice.payment.presentation.port.PaymentConfirmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@Primary
 @RequiredArgsConstructor
-public class PaymentConfirmServiceImpl implements PaymentConfirmService {
+public class PaymentConfirmWithLuaScriptServiceImpl implements PaymentConfirmService {
 
     private final PaymentLoadUseCase paymentLoadUseCase;
     private final PaymentProcessorUseCase paymentProcessorUseCase;
@@ -33,13 +35,21 @@ public class PaymentConfirmServiceImpl implements PaymentConfirmService {
         PaymentEvent paymentEvent = paymentLoadUseCase.loadPayment(command.getOrderId());
         paymentProcessorUseCase.executePayment(paymentEvent, command.getPaymentKey());
 
+        validateAndDecreaseStock(paymentEvent);
+
+        return processPayment(command, paymentEvent);
+    }
+
+    private void validateAndDecreaseStock(PaymentEvent paymentEvent) {
         try {
             orderedGiftCardStockUseCase.decreaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
         } catch (PaymentOrderedStockException e) {
             handleStockFailure(paymentEvent);
             throw PaymentConfirmException.of(PaymentErrorCode.ORDERED_GIFT_CARD_STOCK_NOT_ENOUGH);
         }
+    }
 
+    private PaymentConfirmResult processPayment(PaymentConfirmCommand command, PaymentEvent paymentEvent) {
         try {
             PaymentEvent completedPayment = processPayment(paymentEvent, command);
 
