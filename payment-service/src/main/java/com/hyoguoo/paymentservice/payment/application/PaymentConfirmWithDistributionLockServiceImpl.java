@@ -10,36 +10,68 @@ import com.hyoguoo.paymentservice.payment.domain.dto.TossPaymentInfo;
 import com.hyoguoo.paymentservice.payment.exception.PaymentConfirmException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentConfirmationException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentDoneValidateException;
+import com.hyoguoo.paymentservice.payment.exception.PaymentLockException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentOrderedStockException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentTossNonRetryableException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentTossRetryableException;
 import com.hyoguoo.paymentservice.payment.exception.common.PaymentErrorCode;
 import com.hyoguoo.paymentservice.payment.presentation.port.PaymentConfirmService;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PaymentConfirmServiceImpl implements PaymentConfirmService {
+public class PaymentConfirmWithDistributionLockServiceImpl implements PaymentConfirmService {
 
+    private static final String LOCK_KEY_PREFIX = "gift-card-stock-lock:";
     private final PaymentLoadUseCase paymentLoadUseCase;
     private final PaymentProcessorUseCase paymentProcessorUseCase;
     private final OrderedGiftCardStockUseCase orderedGiftCardStockUseCase;
+    private final RedissonClient redissonClient;
 
     @Override
     public PaymentConfirmResult confirm(PaymentConfirmCommand command) {
         PaymentEvent paymentEvent = paymentLoadUseCase.loadPayment(command.getOrderId());
         paymentProcessorUseCase.executePayment(paymentEvent, command.getPaymentKey());
 
+        String lockKey = LOCK_KEY_PREFIX + paymentEvent.getOrderedGiftCardId();
+        RLock lock = redissonClient.getLock(lockKey);
+
+        try {
+            if (lock.tryLock(10, 5, TimeUnit.SECONDS)) {
+                validateAndDecreaseStock(paymentEvent);
+            } else {
+                log.warn("Unable to acquire lock for GiftCard ID: {}", paymentEvent.getOrderedGiftCardId());
+                throw PaymentLockException.of(PaymentErrorCode.LOCK_NOT_ACQUIRED);
+            }
+            return processPayment(command, paymentEvent);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw PaymentLockException.of(PaymentErrorCode.LOCK_ACQUIRE_INTERRUPTED);
+        } catch (Exception e) {
+            throw PaymentLockException.of(PaymentErrorCode.UNKNOWN_LOCK_ERROR);
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+    }
+
+    private void validateAndDecreaseStock(PaymentEvent paymentEvent) {
         try {
             orderedGiftCardStockUseCase.decreaseStockForOrders(paymentEvent.getOrderedGiftCardId(), 1);
         } catch (PaymentOrderedStockException e) {
             handleStockFailure(paymentEvent);
             throw PaymentConfirmException.of(PaymentErrorCode.ORDERED_GIFT_CARD_STOCK_NOT_ENOUGH);
         }
+    }
 
+    private PaymentConfirmResult processPayment(PaymentConfirmCommand command, PaymentEvent paymentEvent) {
         try {
             PaymentEvent completedPayment = processPayment(paymentEvent, command);
 

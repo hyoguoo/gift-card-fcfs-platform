@@ -1,5 +1,6 @@
 package com.hyoguoo.paymentservice.payment.infrastructure.client;
 
+import com.hyoguoo.paymentservice.core.common.infrastructure.SleepUtil;
 import com.hyoguoo.paymentservice.payment.application.dto.command.TossPaymentConfirmCommand;
 import com.hyoguoo.paymentservice.payment.application.port.TossPaymentGateway;
 import com.hyoguoo.paymentservice.payment.domain.dto.TossPaymentInfo;
@@ -14,6 +15,7 @@ public class FakeTossPaymentGatewayImpl implements TossPaymentGateway {
 
     @Override
     public TossPaymentInfo getPaymentInfoByOrderId(String orderId) {
+        SleepUtil.sleepRandomTime(100, 300);
         return TossPaymentInfo.builder()
                 .paymentKey("fake-payment-key")
                 .orderId(orderId)
@@ -31,6 +33,7 @@ public class FakeTossPaymentGatewayImpl implements TossPaymentGateway {
 
     @Override
     public TossPaymentInfo confirmPayment(TossPaymentConfirmCommand tossConfirmGatewayCommand, String idempotencyKey) {
+        SleepUtil.sleepRandomTime(100, 300);
         return TossPaymentInfo.builder()
                 .paymentKey("fake-payment-key")
                 .orderId(tossConfirmGatewayCommand.getOrderId())

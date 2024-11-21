@@ -22,6 +22,9 @@ public enum PaymentErrorCode implements ErrorCode {
     INVALID_STATUS_TO_DONE("E30012", "결제 완료할 수 없는 상태입니다."),
     INVALID_STATUS_TO_FAIL("E30013", "결제 실패할 수 없는 상태입니다."),
     INVALID_STATUS_TO_UNKNOWN("E30014", "결제를 알 수 없는 상태로 변경할 수 없는 상태입니다."),
+    LOCK_NOT_ACQUIRED("E30015", "분산락을 획득할 수 없습니다."),
+    LOCK_ACQUIRE_INTERRUPTED("E30016", "분산락 획득 중 인터럽트가 발생했습니다."),
+    UNKNOWN_LOCK_ERROR("E30017", "분산락 획득 중 알 수 없는 오류가 발생했습니다."),
     ;
 
     private final String code;
