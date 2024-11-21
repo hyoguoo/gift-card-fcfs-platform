@@ -15,19 +15,30 @@ spring:
             - name: AuthorizationFilter
               args:
                 url-whitelist:
-                  - /gift-card/hello
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
             - Path=/order/**
+          filters:
+            - name: AuthorizationFilter
+              args:
+                url-whitelist:
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/payment/**
+          filters:
+            - name: AuthorizationFilter
+              args:
+                url-whitelist:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
+          filters:
+            - name: AuthorizationFilter
+              args:
+                url-whitelist:
 
 eureka:
   client:
