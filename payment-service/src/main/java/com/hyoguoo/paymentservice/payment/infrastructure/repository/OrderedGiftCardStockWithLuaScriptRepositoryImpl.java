@@ -5,13 +5,15 @@ import com.hyoguoo.paymentservice.payment.exception.PaymentOrderedStockException
 import com.hyoguoo.paymentservice.payment.exception.common.PaymentErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Repository;
 
+@Primary
 @Repository
 @RequiredArgsConstructor
-public class OrderedGiftCardStockRepositoryImpl implements OrderedGiftCardStockRepository {
+public class OrderedGiftCardStockWithLuaScriptRepositoryImpl implements OrderedGiftCardStockRepository {
 
     private static final String GIFT_CARD_STOCK_PREFIX = "gift-card-stock:";
 
