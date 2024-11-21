@@ -7,6 +7,7 @@ import com.hyoguoo.paymentservice.payment.exception.PaymentDoneValidateException
 import com.hyoguoo.paymentservice.payment.exception.PaymentExecuteValidateException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentFailValidateException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentFoundException;
+import com.hyoguoo.paymentservice.payment.exception.PaymentLockException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentTossNonRetryableException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentTossRetryableException;
 import com.hyoguoo.paymentservice.payment.exception.PaymentUnknownValidateException;
@@ -121,6 +122,18 @@ public class PaymentExceptionHandler {
 
     @ExceptionHandler(PaymentTossRetryableException.class)
     public ResponseEntity<ErrorResponse> catchPaymentTossRetryableException(PaymentTossRetryableException e) {
+        log.warn(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(
+                                e.getCode(),
+                                e.getMessage()
+                        )
+                );
+    }
+
+    @ExceptionHandler(PaymentLockException.class)
+    public ResponseEntity<ErrorResponse> catchPaymentLockException(PaymentLockException e) {
         log.warn(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
