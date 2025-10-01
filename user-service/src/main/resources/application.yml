@@ -7,7 +7,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/fcfs-user-service?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&useSSL=true
+    url: jdbc:mysql://mysql-container:3306/fcfs-user-service?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&useSSL=true
     username: root
     password: local59!
   jpa:
@@ -23,7 +23,7 @@ spring:
 
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: kafka-container:9092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
@@ -32,7 +32,7 @@ spring:
             trusted:
               packages: "*"
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: kafka-container:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
@@ -48,7 +48,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://discovery-service-container:8761/eureka/
 
 kafka:
   topics:
