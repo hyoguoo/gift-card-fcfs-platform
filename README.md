@@ -197,10 +197,10 @@ _이미지가 표시되지 않거나 오류 페이지가 나타날 경우, 브�
 **분산락 전체 범위: 결제 승인 요청 로직 전체 범위에 분산락 적용  
 **분산락 최소 범위: 결제 승인 요청 로직 중 재고 감소 로직에만 분산락 적용  
 **Server 2EA: 주문 및 승인을 처리하는 `Order Service`, `Payment Service`를 2대 서버로 테스트  
-**처리 누락: 서버에서 요청 받지 못한 수
-**승인 요청 누락: 주문 생성 요청으로 결제 정보가 생성 됐지만 해당 주문 건에 승인 요청 오지 않은 수
+**처리 누락: 서버에서 요청 받지 못한 수  
+**승인 요청 누락: 주문 생성 요청으로 결제 정보가 생성 됐지만 해당 주문 건에 승인 요청 오지 않은 수  
 **락 획득 실패: 분산락을 획득하지 못한 수  
-**재고 실패: 재고 부족으로 결제 승인 요청이 실패한 수
+**재고 실패: 재고 부족으로 결제 승인 요청이 실패한 수  
 
 </details>
 
@@ -235,6 +235,47 @@ _이미지가 표시되지 않거나 오류 페이지가 나타날 경우, 브�
 
 ## 💳 메인 기능 플로우 - 주문 및 결제
 
+```mermaid
+graph TD
+    subgraph Payment Service
+        PS_Start["결제 승인 요청"] --> PS_RedisStock["Redis 재고 감소 시도"]
+        PS_RedisStock --> PS_CheckStock{Redis 감소 성공?}
+
+        PS_CheckStock -- 실패 --> PS_Fail["'재고 부족' 처리 및 종료"]
+        PS_CheckStock -- 성공 --> PS_PublishStockEvent["재고 차감 이벤트 발행"]
+
+        PS_PublishStockEvent --> PS_PaymentValidation["PG사 결제 검증"]
+        PS_PaymentValidation --> PS_ValidationCheck{검증 성공?}
+
+        PS_ValidationCheck -- 실패 --> PS_PublishRollback["재고 롤백 이벤트 발행"]
+        PS_ValidationCheck -- 성공 --> PS_PublishSuccessEvents["최종 성공 이벤트 발행<br/>(주문, 기프트카드 등)"]
+    end
+
+    subgraph Gift Card Service
+        GCS_DBStock["DB 재고 차감"]
+        GCS_DBRollback["DB 재고 복구"]
+        GCS_Update["기프트카드 상태 변경"]
+    end
+
+    subgraph Order Service
+        OS_Update["주문 상태 '완료'로 변경"]
+    end
+
+    subgraph User Service
+        US_Update["사용자 정보 동기화"]
+    end
+
+%% Inter-service Connections
+    PS_PublishStockEvent --> GCS_DBStock
+    PS_PublishRollback --> GCS_DBRollback
+    PS_PublishSuccessEvents --> OS_Update
+    PS_PublishSuccessEvents --> GCS_Update
+    GCS_Update --> US_Update
+```
+
+<details>
+<summary>📌 전체 플로우</summary>
+
 ### 1. 주문 생성 단계
 
 ![Event Flow Diagram](https://github.com/user-attachments/assets/554ca29f-efb3-4719-90e2-cd65d8459814)
@@ -267,6 +308,8 @@ _이미지가 표시되지 않거나 오류 페이지가 나타날 경우, 브�
     - **결제 완료 처리**: `DONE` 상태로의 payment event 변경 및 주문 성공 메시지 발행을 통한 order 서비스의 `COMPLETED` 상태로의 업데이트
     - **기프트 카드 구매 데이터 동기화**:
         - gift-card 서비스로의 메시지 수신을 통한 `gift_card_user` 테이블 데이터 저장 및 user 서비스로의 메시지 발행을 통한 `user_gift_card` 데이터 동기화
+
+</details>
 
 <br>
 
